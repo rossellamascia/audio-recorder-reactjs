@@ -1,24 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { NoteAudio } from './Models/NoteAudio';
+import { useRecAudio } from './hooks/useRecAudio';
+import Recorder from './components/Recorder';
 
 function App() {
+  const { audioDetails, handleAudioStop, handleReset, setAudioDetails, saveAudioBase64 } = useRecAudio();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <Recorder
+        showUIAudio={true}
+        handleAudioStop={(data: NoteAudio) => handleAudioStop(data)}
+        handleReset={handleReset}
+        audioURL={audioDetails.url}
+        audioBase64DB={saveAudioBase64 as string}
+      />
     </div>
   );
 }
