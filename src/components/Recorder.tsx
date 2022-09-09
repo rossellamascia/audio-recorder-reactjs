@@ -242,7 +242,7 @@ class Recorder extends Component<PropsRecorder, RecorderState> {
                     </div>
                     {!recording ? (
                       <div>
-                        <p className={styles.help}>Premi il microfono per registrare</p>
+                        <p className={styles.help}>Press the microphone to record</p>
                       </div>
                     ) : null}
                   </div>
