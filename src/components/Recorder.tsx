@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Chunks } from "../Models/Chunks";
 import { NoteAudio } from "../Models/NoteAudio";
 import styles from './styles.module.css';
+import { BsFillMicFill, BsFillStopCircleFill } from 'react-icons/bs';
 
 const audioType = "audio/*";
 
@@ -137,7 +138,7 @@ class Recorder extends Component<PropsRecorder, RecorderState> {
   }
 
 
-  stopRecording(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+  stopRecording(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     clearInterval(this.timer);
 
@@ -197,94 +198,91 @@ class Recorder extends Component<PropsRecorder, RecorderState> {
     const { showUIAudio, audioURL } = this.props;
 
     return (
-      <>
-        <div className={styles.recorder_library_box}>
-          <div className={styles.recorder_box}>
-            <div className={styles.recorder_box_inner}>
+      <div className={styles.recorder_box}>
+        <div className={styles.recorder_box_inner}>
 
-              {!medianotFound ? (
-                <div className={styles.record_section}>
-                  <div className={styles.btn_wrapper}>
-                    <button onClick={(e) => this.handleReset(e)}>
-                      Cancella
-                    </button>
+          {!medianotFound ? (
+            <div>
+              <div>
+                {!recording && (
+                  <div className="flex justify-center text-white py-2">
+                    <h2 className={styles.help}>Press the microphone to record</h2>
                   </div>
-                  <div className={styles.duration_section}>
-                    <div className={styles.audio_section}>
-
-                      {audioURL !== null && showUIAudio && audioBase64DB === "" && audioBase64DB !== null && (
-                        <audio controls>
-                          <source src={audios[0]} type="audio/ogg" />
-                          <source src={audios[0]} type="audio/mpeg" />
-                          <source src={audios[0]} type="audio/mp3" />
-                        </audio>
-                      )}
-                      {audioBase64DB !== "" && audioBase64DB !== undefined && audioBase64DB !== null && (
-                        <audio controls>
-                          <source src={audioBase64DB} type="audio/ogg" />
-                          <source src={audioBase64DB} type="audio/mpeg" />
-                        </audio>
-                      )}
-                    </div>
-
-                    <div className={styles.duration}>
-                      <span className={styles.mins}>
-                        {time.m !== undefined
-                          ? `${time.m <= 9 ? "0" + time.m : time.m}`
-                          : "00"}
-                      </span>
-                      <span className={styles.divider}>:</span>
-                      <span className={styles.secs}>
-                        {time.s !== undefined
-                          ? `${time.s <= 9 ? "0" + time.s : time.s}`
-                          : "00"}
-                      </span>
-                    </div>
-                    {!recording ? (
-                      <div>
-                        <p className={styles.help}>Press the microphone to record</p>
-                      </div>
-                    ) : null}
-                  </div>
-                  {!recording ? (
-                    <button onClick={e => this.startRecording(e)}>
-                      start
-                    </button>
-
-                  ) : (
-                    <div className={styles.record_controller}>
-                      <a
-                        onClick={e => this.stopRecording(e)}
-                        href=" #"
-                        className={`${styles.icons} ${styles.stop}`}
-                      >
-                        <span className={styles.stop_icon}></span>
-                      </a>
-                      <a
-                        onClick={
-                          !pauseRecord
-                            ? e => this.handleAudioPause(e)
-                            : e => this.handleAudioStart(e)
-                        }
-                        href=" #"
-                        className={`${styles.icons} ${styles.pause}`}
-                      >
-                        {pauseRecord ?
-                          <span className={styles.play_icons}></span> :
-                          <span className={styles.pause_icons}></span>}
-                      </a>
-                    </div>
+                )}
+                <button onClick={(e) => this.handleReset(e)}>
+                  Cancella
+                </button>
+              </div>
+              <div>
+                <div className="flex justify-center">
+                  {audioURL !== null && showUIAudio && audioBase64DB === "" && audioBase64DB !== null && (
+                    <audio controls>
+                      <source src={audios[0]} type="audio/ogg" />
+                      <source src={audios[0]} type="audio/mpeg" />
+                      <source src={audios[0]} type="audio/mp3" />
+                    </audio>
+                  )}
+                  {audioBase64DB !== "" && audioBase64DB !== undefined && audioBase64DB !== null && (
+                    <audio controls>
+                      <source src={audioBase64DB} type="audio/ogg" />
+                      <source src={audioBase64DB} type="audio/mpeg" />
+                    </audio>
                   )}
                 </div>
+
+                <div className="flex justify-center text-3xl text-white pt-2">
+                  <span>
+                    {time.m !== undefined
+                      ? `${time.m <= 9 ? "0" + time.m : time.m}`
+                      : "00"}
+                  </span>
+                  <span>:</span>
+                  <span>
+                    {time.s !== undefined
+                      ? `${time.s <= 9 ? "0" + time.s : time.s}`
+                      : "00"}
+                  </span>
+                </div>
+
+              </div>
+              {!recording ? (
+                <div className="flex justify-center">
+                  <button onClick={e => this.startRecording(e)} className="button-icon">
+                    <BsFillMicFill fill="white" />
+                  </button>
+                </div>
+
               ) : (
-                <p style={{ color: "#fff", marginTop: 30, fontSize: 25 }}>
-                  Seems the site is Non-SSL
-                </p>
+                <div className="flex justify-center">
+                  <button
+                    onClick={e => this.stopRecording(e)}
+                    className="button-icon"
+                  >
+                    <BsFillStopCircleFill fill="white" />
+                  </button>
+                  <a
+                    onClick={
+                      !pauseRecord
+                        ? e => this.handleAudioPause(e)
+                        : e => this.handleAudioStart(e)
+                    }
+                    href=" #"
+                    className={`${styles.icons} ${styles.pause}`}
+                  >
+                    {pauseRecord ?
+                      <span className={styles.play_icons}></span> :
+                      <span className={styles.pause_icons}></span>}
+                  </a>
+                </div>
               )}
             </div>
-          </div>
+          ) : (
+            <p style={{ color: "#fff", marginTop: 30, fontSize: 25 }}>
+              Seems the site is Non-SSL
+            </p>
+          )}
         </div>
-      </>
+      </div>
     );
   }
 }
