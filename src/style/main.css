@@ -8,6 +8,6 @@ h1 {
 
 @layer components {
   .button-icon {
-    @apply bg-primary p-5 rounded-full;
+    @apply bg-primary p-4 rounded-full;
   }
 }

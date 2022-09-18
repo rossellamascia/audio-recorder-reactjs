@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Chunks } from "../Models/Chunks";
 import { NoteAudio } from "../Models/NoteAudio";
 import styles from './styles.module.css';
-import { BsFillMicFill, BsFillStopCircleFill } from 'react-icons/bs';
+import { BsFillMicFill, BsFillStopCircleFill, BsPause, BsPlay, BsStop, BsStopCircle } from 'react-icons/bs';
 
 const audioType = "audio/*";
 
@@ -55,13 +55,13 @@ class Recorder extends Component<PropsRecorder, RecorderState> {
     this.countDown = this.countDown.bind(this);
   }
 
-  handleAudioPause(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+  handleAudioPause(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     clearInterval(this.timer);
     this.mediaRecorder.pause();
     this.setState({ pauseRecord: true });
   }
-  handleAudioStart(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+  handleAudioStart(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     this.startTimer();
     this.mediaRecorder.resume();
@@ -198,90 +198,88 @@ class Recorder extends Component<PropsRecorder, RecorderState> {
     const { showUIAudio, audioURL } = this.props;
 
     return (
-      <div className={styles.recorder_box}>
-        <div className={styles.recorder_box_inner}>
 
-          {!medianotFound ? (
+      <div>
+        {!medianotFound ? (
+          <div>
             <div>
-              <div>
-                {!recording && (
-                  <div className="flex justify-center text-white py-2">
-                    <h2 className={styles.help}>Press the microphone to record</h2>
-                  </div>
+              <div className="flex justify-center text-white py-2">
+                <h2>{!recording ? 'Press the microphone to record' : 'Audio recording started'}</h2>
+              </div>
+              <button onClick={(e) => this.handleReset(e)}>
+                Clean
+              </button>
+            </div>
+            <div>
+              <div className="flex justify-center">
+                {audioURL !== null && showUIAudio && audioBase64DB === "" && audioBase64DB !== null && (
+                  <audio controls>
+                    <source src={audios[0]} type="audio/ogg" />
+                    <source src={audios[0]} type="audio/mpeg" />
+                    <source src={audios[0]} type="audio/mp3" />
+                  </audio>
                 )}
-                <button onClick={(e) => this.handleReset(e)}>
-                  Cancella
+                {audioBase64DB !== "" && audioBase64DB !== undefined && audioBase64DB !== null && (
+                  <audio controls>
+                    <source src={audioBase64DB} type="audio/ogg" />
+                    <source src={audioBase64DB} type="audio/mpeg" />
+                  </audio>
+                )}
+              </div>
+
+              <div className="flex justify-center text-3xl text-white pt-2">
+                <span>
+                  {time.m !== undefined
+                    ? `${time.m <= 9 ? "0" + time.m : time.m}`
+                    : "00"}
+                </span>
+                <span>:</span>
+                <span>
+                  {time.s !== undefined
+                    ? `${time.s <= 9 ? "0" + time.s : time.s}`
+                    : "00"}
+                </span>
+              </div>
+
+            </div>
+            {!recording ? (
+              <div className="flex justify-center">
+                <button onClick={e => this.startRecording(e)} className="button-icon">
+                  <BsFillMicFill fill="white" />
                 </button>
               </div>
-              <div>
-                <div className="flex justify-center">
-                  {audioURL !== null && showUIAudio && audioBase64DB === "" && audioBase64DB !== null && (
-                    <audio controls>
-                      <source src={audios[0]} type="audio/ogg" />
-                      <source src={audios[0]} type="audio/mpeg" />
-                      <source src={audios[0]} type="audio/mp3" />
-                    </audio>
-                  )}
-                  {audioBase64DB !== "" && audioBase64DB !== undefined && audioBase64DB !== null && (
-                    <audio controls>
-                      <source src={audioBase64DB} type="audio/ogg" />
-                      <source src={audioBase64DB} type="audio/mpeg" />
-                    </audio>
-                  )}
-                </div>
 
-                <div className="flex justify-center text-3xl text-white pt-2">
-                  <span>
-                    {time.m !== undefined
-                      ? `${time.m <= 9 ? "0" + time.m : time.m}`
-                      : "00"}
-                  </span>
-                  <span>:</span>
-                  <span>
-                    {time.s !== undefined
-                      ? `${time.s <= 9 ? "0" + time.s : time.s}`
-                      : "00"}
-                  </span>
-                </div>
-
-              </div>
-              {!recording ? (
-                <div className="flex justify-center">
-                  <button onClick={e => this.startRecording(e)} className="button-icon">
-                    <BsFillMicFill fill="white" />
-                  </button>
-                </div>
-
-              ) : (
-                <div className="flex justify-center">
+            ) : (
+              <div className="flex justify-center">
+                <button
+                  onClick={e => this.stopRecording(e)}
+                  className="button-icon"
+                >
+                  <BsStop fill="white" size="20px" />
+                </button>
+                {pauseRecord ? (
                   <button
-                    onClick={e => this.stopRecording(e)}
+                    onClick={e => this.handleAudioPause(e)}
+                    className="button-icon ml-3"
+                  >
+                    <BsPlay fill="white" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={e => this.handleAudioPause(e)}
                     className="button-icon"
                   >
-                    <BsFillStopCircleFill fill="white" />
+                    <BsPause fill="white" />
                   </button>
-                  <a
-                    onClick={
-                      !pauseRecord
-                        ? e => this.handleAudioPause(e)
-                        : e => this.handleAudioStart(e)
-                    }
-                    href=" #"
-                    className={`${styles.icons} ${styles.pause}`}
-                  >
-                    {pauseRecord ?
-                      <span className={styles.play_icons}></span> :
-                      <span className={styles.pause_icons}></span>}
-                  </a>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p style={{ color: "#fff", marginTop: 30, fontSize: 25 }}>
-              Seems the site is Non-SSL
-            </p>
-          )}
-        </div>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          <p style={{ color: "#fff", marginTop: 30, fontSize: 25 }}>
+            Seems the site is Non-SSL
+          </p>
+        )}
       </div>
     );
   }
